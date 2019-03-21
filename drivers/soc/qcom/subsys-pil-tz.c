@@ -1130,7 +1130,11 @@ static int pil_tz_driver_probe(struct platform_device *pdev)
 			goto err_deregister_bus;
 		}
 
+#ifdef CONFIG_ARCH_MSM8953
+		crypto_id = MSM_BUS_MASTER_CRYPTO_CORE0;
+#else
 		crypto_id = MSM_BUS_MASTER_CRYPTO_CORE_0;
+#endif
 		crypto_node = of_parse_phandle(pdev->dev.of_node,
 						"qcom,mas-crypto", 0);
 		if (!IS_ERR_OR_NULL(crypto_node)) {
