@@ -612,6 +612,16 @@ static const struct of_device_id mpm_gic_chip_data_table[] = {
 };
 MODULE_DEVICE_TABLE(of, mpm_gic_chip_data_table);
 
+static const struct of_device_id mpm_gpio_chip_data_table[] = {
+	{
+		.compatible = "qcom,mpm-gpio-msm8953",
+		.data = mpm_msm8953_gpio_chip_data,
+	},
+	{}
+};
+
+MODULE_DEVICE_TABLE(of, mpm_gpio_chip_data_table);
+
 static int __init mpm_gic_chip_init(struct device_node *node,
 					struct device_node *parent)
 {
@@ -669,6 +679,14 @@ IRQCHIP_DECLARE(mpm_gic_chip, "qcom,mpm-gic", mpm_gic_chip_init);
 static int __init mpm_gpio_chip_init(struct device_node *node,
 					struct device_node *parent)
 {
+	const struct of_device_id *id;
+
+	id = of_match_node(mpm_gpio_chip_data_table, node);
+	if (!id) {
+		pr_err("match_table not found for mpm-gpio\n");
+		return -ENODEV;
+	}
+
 	msm_mpm_dev_data.gpio_chip_domain = irq_domain_create_linear(
 			of_node_to_fwnode(node), num_mpm_irqs,
 			&msm_mpm_gpio_chip_domain_ops, NULL);
