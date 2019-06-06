@@ -8,19 +8,19 @@
 };
 
 &CPU4 {
-	efficiency = <1024>;
+	capacity-dmips-mhz = <1024>;
 };
 
 &CPU5 {
-	efficiency = <1024>;
+	capacity-dmips-mhz = <1024>;
 };
 
 &CPU6 {
-	efficiency = <1024>;
+	capacity-dmips-mhz = <1024>;
 };
 
 &CPU7 {
-	efficiency = <1024>;
+	capacity-dmips-mhz = <1024>;
 };
 
 &clock_gcc_gfx {
