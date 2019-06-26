@@ -1689,6 +1689,8 @@
 		interrupt-names = "hs_phy_irq", "ss_phy_irq", "pwr_event_irq";
 
 		USB3_GDSC-supply = <&gdsc_usb30>;
+		qcom,reset-ep-after-lpm-resume;
+
 		qcom,usb-dbm = <&dbm_1p5>;
 		qcom,msm-bus,name = "usb3";
 		qcom,msm-bus,num-cases = <3>;
@@ -1726,10 +1728,14 @@
 			interrupts = <0 140 0>;
 			usb-phy = <&qusb_phy>, <&ssphy>;
 			tx-fifo-resize;
+			linux,sysdev_is_parent;
 			snps,usb3-u1u2-disable;
 			snps,is-utmi-l1-suspend;
 			snps,usb2-l1-disable;
 			snps,hird-threshold = /bits/ 8 <0x0>;
+			usb-core-id = <0>;
+			maximum-speed = "super-speed";
+			dr_mode = "otg";
 		};
 
 		qcom,usbbam@7104000 {
@@ -1952,12 +1958,6 @@
 			<&clock_gcc GCC_USB3PHY_PHY_BCR>;
 
 		reset-names = "phy_reset", "phy_phy_reset";
-	};
-
-	dbm_1p5: dbm@70f8000 {
-		compatible = "qcom,usb-dbm-1p5";
-		reg = <0x070f8000 0x300>;
-		qcom,reset-ep-after-lpm-resume;
 	};
 
 	qcom,mss@4080000 {
