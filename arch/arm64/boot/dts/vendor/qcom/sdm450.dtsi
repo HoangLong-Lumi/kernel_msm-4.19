@@ -122,7 +122,7 @@
 
 &pm8953_vadc {
 	pinctrl-0 = <&pa_therm1_default>;
-	/delete-node/ chan@13;
+	/delete-node/ case_therm;
 };
 
 &pm8953_mpps {
