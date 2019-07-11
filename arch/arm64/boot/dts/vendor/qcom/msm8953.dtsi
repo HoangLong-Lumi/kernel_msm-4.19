@@ -259,7 +259,7 @@
 		compatible = "qcom,mpm-gpio-msm8953", "qcom,mpm-gpio";
 		interrupt-controller;
 		interrupt-parent = <&intc>;
-		#interrupt-cells = <2>;
+		#interrupt-cells = <3>;
 	};
 
 	qcom,msm-gladiator@b1c0000 {
