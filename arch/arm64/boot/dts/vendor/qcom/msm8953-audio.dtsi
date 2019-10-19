@@ -320,6 +320,7 @@
 	clock_audio: audio_ext_clk {
 		status = "disabled";
 		compatible = "qcom,audio-ref-clk";
+		qcom,codec-ext-clk-src = <1>;
 		clock-names = "osr_clk";
 		qcom,node_has_rpm_clock;
 		#clock-cells = <1>;
@@ -363,8 +364,8 @@
 		qcom,wcd-rst-gpio-node = <&wcd_rst_gpio>;
 
 		clock-names = "wcd_clk", "wcd_native_clk";
-		clocks = <&clock_audio clk_audio_pmi_clk>,
-			<&clock_audio clk_audio_ap_clk2>;
+		clocks = <&clock_audio 0>,
+			<&clock_audio 0>;
 
 		qcom,cdc-static-supplies =
 				"cdc-vdd-buck",
