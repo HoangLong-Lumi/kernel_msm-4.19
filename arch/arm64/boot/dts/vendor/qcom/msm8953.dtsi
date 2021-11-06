@@ -162,18 +162,6 @@
 	};
 
 	aliases {
-		/* smdtty devices */
-		smd1 = &smdtty_apps_fm;
-		smd2 = &smdtty_apps_riva_bt_acl;
-		smd3 = &smdtty_apps_riva_bt_cmd;
-		smd4 = &smdtty_mbalbridge;
-		smd5 = &smdtty_apps_riva_ant_cmd;
-		smd6 = &smdtty_apps_riva_ant_data;
-		smd7 = &smdtty_data1;
-		smd8 = &smdtty_data4;
-		smd11 = &smdtty_data11;
-		smd21 = &smdtty_data21;
-		smd36 = &smdtty_loopback;
 		sdhc1 = &sdhc_1; /* SDC1 eMMC slot */
 		sdhc2 = &sdhc_2; /* SDC2 for SD card */
 		i2c1 = &i2c_1;
@@ -903,6 +891,11 @@
 		qcom,num-locks = <8>;
 	};
 
+	apcs: syscon@0b011008 {
+		compatible = "syscon";
+		reg = <0x0b011008 0x04>;
+	};
+
 	qcom,smem@86300000 {
 		compatible = "qcom,smem";
 		reg = <0x86300000 0x100000>,
@@ -912,128 +905,144 @@
 		reg-names = "smem", "irq-reg-base",
 				"aux-mem1", "smem_targ_info_reg";
 		qcom,mpu-enabled;
+	};
 
-		qcom,smd-modem {
-			compatible = "qcom,smd";
+	smd {
+		compatible = "qcom,smd";
+
+		modem {
+			interrupts = <GIC_SPI 25 IRQ_TYPE_EDGE_RISING>;
+
+			qcom,ipc = <&apcs 0 12>;
 			qcom,smd-edge = <0>;
-			qcom,smd-irq-offset = <0x0>;
-			qcom,smd-irq-bitmask = <0x1000>;
-			interrupts = <0 25 1>;
-			label = "modem";
-			qcom,not-loadable;
+			qcom,remote-pid = <1>;
+			label = "mpss";
+
+			qcom,smd-channels = "IPCRTR";
+			qcom,modem_qrtr {
+				qcom,net-id = <1>;
+				qcom,low-latency;
+			};
+
+			qcom,diag {
+				qcom,smd-channels = "DIAG";
+			};
+
+			qcom,diag_cntl {
+				qcom,smd-channels = "DIAG_CNTL";
+			};
+
+			qcom,diag_cmd {
+				qcom,smd-channels = "DIAG_CMD";
+			};
+
+			qcom,diag_dci {
+				qcom,smd-channels = "DIAG_2";
+			};
+
+			qcom.diag_dci_cmd {
+				qcom,smd-channels = "DIAG_2_CMD";
+			};
 		};
 
-		qcom,smsm-modem {
-			compatible = "qcom,smsm";
-			qcom,smsm-edge = <0>;
-			qcom,smsm-irq-offset = <0x0>;
-			qcom,smsm-irq-bitmask = <0x2000>;
-			interrupts = <0 26 1>;
-		};
+		adsp {
+			interrupts = <GIC_SPI 289 IRQ_TYPE_EDGE_RISING>;
 
-		qcom,smd-wcnss {
-			compatible = "qcom,smd";
-			qcom,smd-edge = <6>;
-			qcom,smd-irq-offset = <0x0>;
-			qcom,smd-irq-bitmask = <0x20000>;
-			interrupts = <0 142 1>;
-			label = "wcnss";
-		};
-
-		qcom,smsm-wcnss {
-			compatible = "qcom,smsm";
-			qcom,smsm-edge = <6>;
-			qcom,smsm-irq-offset = <0x0>;
-			qcom,smsm-irq-bitmask = <0x80000>;
-			interrupts = <0 144 1>;
-		};
-
-		qcom,smd-adsp {
-			compatible = "qcom,smd";
+			qcom,ipc = <&apcs 0 8>;
 			qcom,smd-edge = <1>;
-			qcom,smd-irq-offset = <0x0>;
-			qcom,smd-irq-bitmask = <0x100>;
-			interrupts = <0 289 1>;
+			qcom,remote-pid = <2>;
+			mbox-names = "adsp_smem";
 			label = "adsp";
+
+			qcom,smd-channels = "IPCRTR";
+			qcom,adsp_qrtr {
+				qcom,net-id = <1>;
+				qcom,low-latency;
+			};
+
+			qcom,diag {
+				qcom,smd-channels = "DIAG";
+			};
+
+			qcom,diag_cntl {
+				qcom,smd-channels = "DIAG_CNTL";
+			};
+
+			qcom,apr_tal_rpmsg {
+				qcom,smd-channels = "apr_audio_svc";
+			};
 		};
 
-		qcom,smsm-adsp {
-			compatible = "qcom,smsm";
-			qcom,smsm-edge = <1>;
-			qcom,smsm-irq-offset = <0x0>;
-			qcom,smsm-irq-bitmask = <0x200>;
-			interrupts = <0 290 1>;
+		wcnss {
+			interrupts = <GIC_SPI 142 IRQ_TYPE_EDGE_RISING>;
+
+			qcom,ipc = <&apcs 0 17>;
+			qcom,smd-edge = <6>;
+			qcom,remote-pid = <4>;
+			label = "wcnss";
+
+			qcom,smd-channels = "IPCRTR";
+			qcom,wcnss_qrtr {
+				qcom,net-id = <1>;
+				qcom,low-latency;
+			};
+
+			qcom,diag {
+				qcom,smd-channels = "APPS_RIVA_DATA";
+			};
+
+			qcom,diag_cntl {
+				qcom,smd-channels = "APPS_RIVA_CTRL";
+			};
 		};
 
-		qcom,smd-rpm {
-			compatible = "qcom,smd";
+		rpm {
+			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
+			qcom,ipc = <&apcs 0 0>;
 			qcom,smd-edge = <15>;
-			qcom,smd-irq-offset = <0x0>;
-			qcom,smd-irq-bitmask = <0x1>;
-			interrupts = <0 168 1>;
 			label = "rpm";
-			qcom,irq-no-suspend;
-			qcom,not-loadable;
+
+			rpm_requests: rpm_requests@0 {
+				compatible = "qcom,rpm-smd";
+				qcom,smd-channels = "rpm_requests";
+			};
+
 		};
 	};
 
-	qcom,smdtty {
-		compatible = "qcom,smdtty";
+	qcom,smsm {
+		compatible = "qcom,smsm";
+		#address-cells = <1>;
+		#size-cells = <0>;
 
-		smdtty_apps_fm: qcom,smdtty-apps-fm {
-			qcom,smdtty-remote = "wcnss";
-			qcom,smdtty-port-name = "APPS_FM";
+		qcom,ipc-1 = <&apcs 0 13>;
+		qcom,ipc-2 = <&apcs 0 9>;
+		qcom,ipc-3 = <&apcs 0 19>;
+
+		apps_smsm: apps@0 {
+			reg = <0>;
+			#qcom,smem-state-cells = <1>;
 		};
 
-		smdtty_apps_riva_bt_acl: smdtty-apps-riva-bt-acl {
-			qcom,smdtty-remote = "wcnss";
-			qcom,smdtty-port-name = "APPS_RIVA_BT_ACL";
+		modem_smsm: modem@1 {
+			reg = <1>;
+			interrupts = <0 26 IRQ_TYPE_EDGE_RISING>;
+			interrupt-controller;
+			#interrupt-cells = <2>;
 		};
 
-		smdtty_apps_riva_bt_cmd: qcom,smdtty-apps-riva-bt-cmd {
-			qcom,smdtty-remote = "wcnss";
-			qcom,smdtty-port-name = "APPS_RIVA_BT_CMD";
+		adsp_smsm: adsp@2 {
+			reg = <2>;
+			interrupts = <0 290 IRQ_TYPE_EDGE_RISING>;
+			interrupt-controller;
+			#interrupt-cells = <2>;
 		};
 
-		smdtty_mbalbridge: qcom,smdtty-mbalbridge {
-			qcom,smdtty-remote = "modem";
-			qcom,smdtty-port-name = "MBALBRIDGE";
-		};
-
-		smdtty_apps_riva_ant_cmd: smdtty-apps-riva-ant-cmd {
-			qcom,smdtty-remote = "wcnss";
-			qcom,smdtty-port-name = "APPS_RIVA_ANT_CMD";
-		};
-
-		smdtty_apps_riva_ant_data: smdtty-apps-riva-ant-data {
-			qcom,smdtty-remote = "wcnss";
-			qcom,smdtty-port-name = "APPS_RIVA_ANT_DATA";
-		};
-
-		smdtty_data1: qcom,smdtty-data1 {
-			qcom,smdtty-remote = "modem";
-			qcom,smdtty-port-name = "DATA1";
-		};
-
-		smdtty_data4: qcom,smdtty-data4 {
-			qcom,smdtty-remote = "modem";
-			qcom,smdtty-port-name = "DATA4";
-		};
-
-		smdtty_data11: qcom,smdtty-data11 {
-			qcom,smdtty-remote = "modem";
-			qcom,smdtty-port-name = "DATA11";
-		};
-
-		smdtty_data21: qcom,smdtty-data21 {
-			qcom,smdtty-remote = "modem";
-			qcom,smdtty-port-name = "DATA21";
-		};
-
-		smdtty_loopback: smdtty-loopback {
-			qcom,smdtty-remote = "modem";
-			qcom,smdtty-port-name = "LOOPBACK";
-			qcom,smdtty-dev-name = "LOOPBACK_TTY";
+		wcnss_smsm: wcnss@3 {
+			reg = <3>;
+			interrupts = <0 144 IRQ_TYPE_EDGE_RISING>;
+			interrupt-controller;
+			#interrupt-cells = <2>;
 		};
 	};
 
@@ -1084,6 +1093,7 @@
 	rpm_bus: qcom,rpm-smd {
 		compatible = "qcom,rpm-smd";
 		rpm-channel-name = "rpm_requests";
+		interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
 		rpm-channel-type = <15>; /* SMD_APPS_RPM */
 	};
 
