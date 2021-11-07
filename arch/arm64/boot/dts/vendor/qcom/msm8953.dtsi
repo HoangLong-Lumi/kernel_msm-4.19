@@ -1808,15 +1808,23 @@
 		qcom,qdsp6v56-1-10;
 		qcom,reset-clk;
 
-		/* GPIO inputs from mss */
-		qcom,gpio-err-fatal = <&smp2pgpio_ssr_smp2p_1_in 0 0>;
-		qcom,gpio-err-ready = <&smp2pgpio_ssr_smp2p_1_in 1 0>;
-		qcom,gpio-proxy-unvote = <&smp2pgpio_ssr_smp2p_1_in 2 0>;
-		qcom,gpio-stop-ack = <&smp2pgpio_ssr_smp2p_1_in 3 0>;
-		qcom,gpio-shutdown-ack = <&smp2pgpio_ssr_smp2p_1_in 7 0>;
+		/* Inputs from mss */
+		interrupts-extended = <&modem_smp2p_in 0 0>,
+				<&modem_smp2p_in 1 0>,
+				<&modem_smp2p_in 2 0>,
+				<&modem_smp2p_in 3 0>,
+				<&modem_smp2p_in 7 0>;
 
-		/* GPIO output to mss */
-		qcom,gpio-force-stop = <&smp2pgpio_ssr_smp2p_1_out 0 0>;
+		interrupt-names = "qcom,err-fatal",
+				"qcom,err-ready",
+				"qcom,proxy-unvote",
+				"qcom,stop-ack",
+				"qcom,shutdown-ack";
+
+		/* Outputs to mss */
+		qcom,smem-states = <&modem_smp2p_out 0>;
+		qcom,smem-state-names = "qcom,force-stop";
+
 		memory-region = <&modem_mem>;
 	};
 
@@ -1849,14 +1857,20 @@
 		qcom,ssctl-instance-id = <0x14>;
 		qcom,firmware-name = "adsp";
 
-		/* GPIO inputs from lpass */
-		qcom,gpio-err-fatal = <&smp2pgpio_ssr_smp2p_2_in 0 0>;
-		qcom,gpio-proxy-unvote = <&smp2pgpio_ssr_smp2p_2_in 2 0>;
-		qcom,gpio-err-ready = <&smp2pgpio_ssr_smp2p_2_in 1 0>;
-		qcom,gpio-stop-ack = <&smp2pgpio_ssr_smp2p_2_in 3 0>;
+		/* Inputs from lpass */
+		interrupts-extended = <&adsp_smp2p_in 0 0>,
+				<&adsp_smp2p_in 1 0>,
+				<&adsp_smp2p_in 2 0>,
+				<&adsp_smp2p_in 3 0>;
 
-		/* GPIO output to lpass */
-		qcom,gpio-force-stop = <&smp2pgpio_ssr_smp2p_2_out 0 0>;
+		interrupt-names = "qcom,err-fatal",
+				"qcom,err-ready",
+				"qcom,proxy-unvote",
+				"qcom,stop-ack";
+
+		/* Outputs to lpass */
+		qcom,smem-states = <&adsp_smp2p_out 0>;
+		qcom,smem-state-names = "qcom,force-stop";
 
 		memory-region = <&adsp_fw_mem>;
 	};
@@ -1890,14 +1904,21 @@
 		qcom,ssctl-instance-id = <0x13>;
 		qcom,firmware-name = "wcnss";
 
-		/* GPIO inputs from wcnss */
-		qcom,gpio-err-fatal = <&smp2pgpio_ssr_smp2p_4_in 0 0>;
-		qcom,gpio-err-ready = <&smp2pgpio_ssr_smp2p_4_in 1 0>;
-		qcom,gpio-proxy-unvote = <&smp2pgpio_ssr_smp2p_4_in 2 0>;
-		qcom,gpio-stop-ack = <&smp2pgpio_ssr_smp2p_4_in 3 0>;
+		/* Inputs from wcnss */
+		interrupts-extended = <&wcnss_smp2p_in 0 0>,
+				<&wcnss_smp2p_in 1 0>,
+				<&wcnss_smp2p_in 2 0>,
+				<&wcnss_smp2p_in 3 0>;
 
-		/* GPIO output to wcnss */
-		qcom,gpio-force-stop = <&smp2pgpio_ssr_smp2p_4_out 0 0>;
+		interrupt-names = "qcom,err-fatal",
+				"qcom,err-ready",
+				"qcom,proxy-unvote",
+				"qcom,stop-ack";
+
+		/* Outputs to wcnss */
+		qcom,smem-states = <&wcnss_smp2p_out 0>;
+		qcom,smem-state-names = "qcom,force-stop";
+
 		memory-region = <&wcnss_fw_mem>;
 	};
 
