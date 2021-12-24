@@ -8,10 +8,10 @@
 };
 
 &soc {
-	qcom,msm-audio-apr {
+	audio_apr: qcom,msm-audio-apr {
 		compatible = "qcom,msm-audio-apr";
-		msm_audio_apr_dummy {
-			compatible = "qcom,msm-audio-apr-dummy";
+		q6core: q6core {
+			compatible = "qcom,q6core-audio";
 		};
 	};
 
@@ -179,12 +179,14 @@
 		pinctrl-0 = <&wsa_vi_on>;
 		pinctrl-1 = <&wsa_vi_off>;
 	};
+
 	wsa881x_analog_clk_gpio: wsa881x_analog_clk_pctrl {
 		compatible = "qcom,msm-cdc-pinctrl";
 		pinctrl-names = "aud_active", "aud_sleep";
 		pinctrl-0 = <&wsa_clk_on>;
 		pinctrl-1 = <&wsa_clk_off>;
 	};
+
 	wsa881x_analog_reset_gpio: wsa881x_analog_reset_pctrl {
 		compatible = "qcom,msm-cdc-pinctrl";
 		pinctrl-names = "aud_active", "aud_sleep";
