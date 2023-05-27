@@ -8,19 +8,18 @@
 #include <asm/mach/map.h>
 #include <asm/mach/arch.h>
 
-static const char *sdm450_dt_match[] __initconst = {
-	"qcom,sdm450",
-	"qcom,sda450",
+static const char *sdm632_dt_match[] __initconst = {
+	"qcom,sdm632",
 	NULL
 };
 
-static void __init sdm450_init(void)
+static void __init sdm632_init(void)
 {
 	board_dt_populate(NULL);
 }
 
 DT_MACHINE_START(SDM450_DT,
-	"Qualcomm Technologies, Inc. SDM450 (Flattened Device Tree)")
-	.init_machine		= sdm450_init,
-	.dt_compat		= sdm450_dt_match,
+	"Qualcomm Technologies, Inc. SDM632 (Flattened Device Tree)")
+	.init_machine		= sdm632_init,
+	.dt_compat		= sdm632_dt_match,
 MACHINE_END

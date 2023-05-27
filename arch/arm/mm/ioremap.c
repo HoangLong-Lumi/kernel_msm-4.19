@@ -317,6 +317,12 @@ static void __iomem * __arm_ioremap_pfn_caller(unsigned long pfn,
  	addr = (unsigned long)area->addr;
 	area->phys_addr = paddr;
 
+	prot = __pgprot(type->prot_pte);
+#ifdef CONFIG_ARCH_MSM8953_SOC_SETTINGS
+	if (paddr >= MSM8953_TLMM_START_ADDR &&
+	    paddr <= MSM8953_TLMM_END_ADDR)
+		prot = pgprot_stronglyordered(type->prot_pte);
+#endif
 #if !defined(CONFIG_SMP) && !defined(CONFIG_ARM_LPAE)
 	if (DOMAIN_IO == 0 &&
 	    (((cpu_architecture() >= CPU_ARCH_ARMv6) && (get_cr() & CR_XP)) ||
@@ -330,7 +336,7 @@ static void __iomem * __arm_ioremap_pfn_caller(unsigned long pfn,
 	} else
 #endif
 		err = ioremap_page_range(addr, addr + size, paddr,
-					 __pgprot(type->prot_pte));
+					 prot);
 
 	if (err) {
  		vunmap((void *)addr);

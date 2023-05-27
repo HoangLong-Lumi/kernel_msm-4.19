@@ -522,6 +522,7 @@ static const struct of_device_id reserved_mem_matches[] = {
 	{}
 };
 
+#if !defined(CONFIG_PPC) && !defined(CONFIG_ARCH_MSM8953_BOOT_ORDERING)
 static int __init of_platform_default_populate_init(void)
 {
 	struct device_node *node;
@@ -553,6 +554,7 @@ static int __init of_platform_default_populate_init(void)
 	return 0;
 }
 arch_initcall_sync(of_platform_default_populate_init);
+#endif
 
 static int __init of_platform_sync_state_init(void)
 {
