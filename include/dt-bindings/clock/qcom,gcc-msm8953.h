@@ -199,20 +199,22 @@
 #define MCLK2_CLK_SRC				189
 #define MCLK3_CLK_SRC				190
 #define MDP_CLK_SRC				191
-#define PCLK0_CLK_SRC				192
-#define PCLK1_CLK_SRC				193
-#define PDM2_CLK_SRC				194
-#define RBCPR_GFX_CLK_SRC			195
-#define SDCC1_APPS_CLK_SRC			196
-#define SDCC1_ICE_CORE_CLK_SRC			197
-#define SDCC2_APPS_CLK_SRC			198
-#define USB30_MASTER_CLK_SRC			199
-#define USB30_MOCK_UTMI_CLK_SRC			200
-#define USB3_AUX_CLK_SRC			201
-#define VCODEC0_CLK_SRC				202
-#define VFE0_CLK_SRC				203
-#define VFE1_CLK_SRC				204
-#define VSYNC_CLK_SRC				205
+#define MDSS_MDP_VOTE_CLK			192
+#define MDSS_ROTATOR_VOTE_CLK			193
+#define PCLK0_CLK_SRC				194
+#define PCLK1_CLK_SRC				195
+#define PDM2_CLK_SRC				196
+#define RBCPR_GFX_CLK_SRC			197
+#define SDCC1_APPS_CLK_SRC			198
+#define SDCC1_ICE_CORE_CLK_SRC			199
+#define SDCC2_APPS_CLK_SRC			200
+#define USB30_MASTER_CLK_SRC			201
+#define USB30_MOCK_UTMI_CLK_SRC			202
+#define USB3_AUX_CLK_SRC			203
+#define VCODEC0_CLK_SRC				204
+#define VFE0_CLK_SRC				205
+#define VFE1_CLK_SRC				206
+#define VSYNC_CLK_SRC				207
 
 /* GCC block resets */
 #define GCC_CAMSS_MICRO_BCR			0

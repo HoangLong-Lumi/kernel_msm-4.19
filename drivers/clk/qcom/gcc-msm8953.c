@@ -10,15 +10,19 @@
 #include <linux/platform_device.h>
 #include <linux/of.h>
 #include <linux/of_device.h>
+#include <linux/clk.h>
 #include <linux/clk-provider.h>
 #include <linux/regmap.h>
 #include <linux/reset-controller.h>
+#include <linux/nvmem-consumer.h>
 
 #include <dt-bindings/clock/qcom,gcc-msm8953.h>
 
 #include "clk-alpha-pll.h"
 #include "clk-branch.h"
+#include "clk-pll.h"
 #include "clk-rcg.h"
+#include "clk-voter.h"
 #include "common.h"
 #include "gdsc.h"
 #include "reset.h"
@@ -3277,6 +3281,9 @@ static struct clk_branch gcc_mdss_mdp_clk = {
 	}
 };
 
+static DEFINE_CLK_VOTER(mdss_mdp_vote_clk, gcc_mdss_mdp_clk, 0);
+static DEFINE_CLK_VOTER(mdss_rotator_vote_clk, gcc_mdss_mdp_clk, 0);
+
 static struct clk_branch gcc_mdss_pclk0_clk = {
 	.halt_reg = 0x4d084,
 	.halt_check = BRANCH_HALT,
@@ -4224,6 +4231,123 @@ static void __exit gcc_msm8953_exit(void)
 	platform_driver_unregister(&gcc_msm8953_driver);
 }
 module_exit(gcc_msm8953_exit);
+
+static struct clk_hw *mdss_msm8953_hws[] = {
+	[MDSS_MDP_VOTE_CLK] = &mdss_mdp_vote_clk.hw,
+	[MDSS_ROTATOR_VOTE_CLK] = &mdss_rotator_vote_clk.hw,
+};
+
+static struct clk_regmap *mdss_msm8953_clocks[] = {
+	[GCC_MDSS_BYTE0_CLK] = &gcc_mdss_byte0_clk.clkr,
+	[GCC_MDSS_BYTE1_CLK] = &gcc_mdss_byte1_clk.clkr,
+	[GCC_MDSS_PCLK0_CLK] = &gcc_mdss_pclk0_clk.clkr,
+	[GCC_MDSS_PCLK1_CLK] = &gcc_mdss_pclk1_clk.clkr,
+	[BYTE0_CLK_SRC] = &byte0_clk_src.clkr,
+	[BYTE1_CLK_SRC] = &byte1_clk_src.clkr,
+	[PCLK0_CLK_SRC] = &pclk0_clk_src.clkr,
+	[PCLK1_CLK_SRC] = &pclk1_clk_src.clkr,
+};
+
+static const struct qcom_cc_desc mdss_msm8953_desc = {
+	.config = &gcc_msm8953_regmap_config,
+	.clks = mdss_msm8953_clocks,
+	.num_clks = ARRAY_SIZE(mdss_msm8953_clocks),
+	.hwclks = mdss_msm8953_hws,
+	.num_hwclks = ARRAY_SIZE(mdss_msm8953_hws),
+};
+
+static const struct of_device_id mdss_msm8953_match_table[] = {
+	{ .compatible = "qcom,gcc-mdss-msm8953" },
+	{ .compatible = "qcom,gcc-mdss-sdm632" },
+	{}
+};
+MODULE_DEVICE_TABLE(of, mdss_msm8953_match_table);
+
+static int mdss_msm8953_probe(struct platform_device *pdev)
+{
+	struct clk *clk;
+	struct regmap *regmap;
+	struct resource *res;
+	void __iomem *base;
+	int ret;
+
+	clk = clk_get(&pdev->dev, "pclk0_src");
+	if (IS_ERR(clk)) {
+		if (PTR_ERR(clk) != -EPROBE_DEFER)
+			dev_err(&pdev->dev, "Unable to get pclk0_src clock\n");
+		return PTR_ERR(clk);
+	}
+	clk_put(clk);
+
+	clk = clk_get(&pdev->dev, "pclk1_src");
+	if (IS_ERR(clk)) {
+		if (PTR_ERR(clk) != -EPROBE_DEFER)
+			dev_err(&pdev->dev, "Unable to get pclk1_src clock\n");
+		return PTR_ERR(clk);
+	}
+	clk_put(clk);
+
+	clk = clk_get(&pdev->dev, "byte0_src");
+	if (IS_ERR(clk)) {
+		if (PTR_ERR(clk) != -EPROBE_DEFER)
+			dev_err(&pdev->dev, "Unable to get byte0_src clock\n");
+		return PTR_ERR(clk);
+	}
+	clk_put(clk);
+
+	clk = clk_get(&pdev->dev, "byte1_src");
+	if (IS_ERR(clk)) {
+		if (PTR_ERR(clk) != -EPROBE_DEFER)
+			dev_err(&pdev->dev, "Unable to get byte1_src clock\n");
+		return PTR_ERR(clk);
+	}
+	clk_put(clk);
+
+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	if (res == NULL) {
+		dev_err(&pdev->dev, "Failed to get resources\n");
+		return -EINVAL;
+	}
+
+	base = devm_ioremap(&pdev->dev, res->start, resource_size(res));
+	if (IS_ERR(base))
+		return PTR_ERR(base);
+
+	regmap = devm_regmap_init_mmio(&pdev->dev, base,
+					mdss_msm8953_desc.config);
+	if (IS_ERR(regmap))
+		return PTR_ERR(regmap);
+
+	ret = qcom_cc_really_probe(pdev, &mdss_msm8953_desc, regmap);
+	if (ret) {
+		dev_err(&pdev->dev, "Failed to register MDSS clocks\n");
+		return ret;
+	}
+
+	dev_info(&pdev->dev, "Registered GCC MDSS Clocks\n");
+
+	return ret;
+}
+
+static struct platform_driver mdss_msm8953_driver = {
+	.probe = mdss_msm8953_probe,
+	.driver = {
+		.name = "gcc-mdss-msm8953",
+		.of_match_table = mdss_msm8953_match_table,
+	},
+};
+
+static int __init mdss_msm8953_init(void)
+{
+	return platform_driver_register(&mdss_msm8953_driver);
+}
+subsys_initcall(mdss_msm8953_init);
+
+static void __exit mdss_msm8953_exit(void)
+{
+	platform_driver_unregister(&mdss_msm8953_driver);
+}
+module_exit(mdss_msm8953_exit);
 
 MODULE_DESCRIPTION("Qualcomm GCC MSM8953 Driver");
 MODULE_LICENSE("GPL v2");
