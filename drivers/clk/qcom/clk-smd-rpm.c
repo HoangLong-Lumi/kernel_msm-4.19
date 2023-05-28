@@ -1080,6 +1080,49 @@ static const struct rpm_smd_clk_desc rpm_clk_sdm660 = {
 	.num_clks = ARRAY_SIZE(sdm660_clks),
 };
 
+/* msm8953 */
+DEFINE_CLK_SMD_RPM(msm8953, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
+DEFINE_CLK_SMD_RPM(msm8953, sysmmnoc_clk, sysmmnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
+DEFINE_CLK_SMD_RPM_BRANCH(msm8953, bi_tcxo, bi_tcxo_ao, QCOM_SMD_RPM_MISC_CLK, 0, 19200000);
+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8953, ln_bb_clk, ln_bb_a_clk, 8);
+
+static struct clk_hw *msm8953_clks[] = {
+	[RPM_SMD_XO_CLK_SRC]		= &msm8953_bi_tcxo.hw,
+	[RPM_SMD_XO_A_CLK_SRC]		= &msm8953_bi_tcxo_ao.hw,
+	[RPM_SMD_PCNOC_CLK]		= &msm8916_pcnoc_clk.hw,
+	[RPM_SMD_PCNOC_A_CLK]		= &msm8916_pcnoc_a_clk.hw,
+	[RPM_SMD_SNOC_CLK]		= &msm8916_snoc_clk.hw,
+	[RPM_SMD_SNOC_A_CLK]		= &msm8916_snoc_a_clk.hw,
+	[RPM_SMD_BIMC_CLK]		= &msm8916_bimc_clk.hw,
+	[RPM_SMD_BIMC_A_CLK]		= &msm8916_bimc_a_clk.hw,
+	[RPM_SMD_IPA_CLK]		= &msm8953_ipa_clk.hw,
+	[RPM_SMD_IPA_A_CLK]		= &msm8953_ipa_a_clk.hw,
+	[RPM_SMD_SYSMMNOC_CLK]		= &msm8953_sysmmnoc_clk.hw,
+	[RPM_SMD_SYSMMNOC_A_CLK]	= &msm8953_sysmmnoc_a_clk.hw,
+	[RPM_SMD_QDSS_CLK]		= &msm8916_qdss_clk.hw,
+	[RPM_SMD_QDSS_A_CLK]		= &msm8916_qdss_a_clk.hw,
+	[RPM_SMD_BB_CLK1]		= &msm8916_bb_clk1.hw,
+	[RPM_SMD_BB_CLK1_A]		= &msm8916_bb_clk1_a.hw,
+	[RPM_SMD_BB_CLK2]		= &msm8916_bb_clk2.hw,
+	[RPM_SMD_BB_CLK2_A]		= &msm8916_bb_clk2_a.hw,
+	[RPM_SMD_RF_CLK2]		= &msm8916_rf_clk2.hw,
+	[RPM_SMD_RF_CLK2_A]		= &msm8916_rf_clk2_a.hw,
+	[RPM_SMD_RF_CLK3]		= &msm8953_ln_bb_clk.hw,
+	[RPM_SMD_RF_CLK3_A]		= &msm8953_ln_bb_a_clk.hw,
+	[RPM_SMD_DIV_CLK2]		= &msm8974_div_clk2.hw,
+	[RPM_SMD_DIV_A_CLK2]		= &msm8974_div_a_clk2.hw,
+	[RPM_SMD_BB_CLK1_PIN]		= &msm8916_bb_clk1_pin.hw,
+	[RPM_SMD_BB_CLK1_A_PIN]		= &msm8916_bb_clk1_a_pin.hw,
+	[RPM_SMD_BB_CLK2_PIN]		= &msm8916_bb_clk2_pin.hw,
+	[RPM_SMD_BB_CLK2_A_PIN]		= &msm8916_bb_clk2_a_pin.hw,
+};
+
+static const struct rpm_smd_clk_desc rpm_clk_msm8953 = {
+	.clks = msm8953_clks,
+	.num_rpm_clks = RPM_SMD_RF_CLK2_A_PIN,
+	.num_clks = ARRAY_SIZE(msm8953_clks),
+};
+
 /* sdm429w SMD clocks */
 DEFINE_CLK_SMD_RPM_BRANCH(sdm429w, bi_tcxo, bi_tcxo_ao,
 					QCOM_SMD_RPM_MISC_CLK, 0, 19200000);
@@ -1184,6 +1227,7 @@ static const struct rpm_smd_clk_desc rpm_clk_qm215 = {
 
 static const struct of_device_id rpm_smd_clk_match_table[] = {
 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
+	{ .compatible = "qcom,rpmcc-msm8953", .data = &rpm_clk_msm8953 },
 	{ .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
 	{ .compatible = "qcom,rpmcc-msm8996", .data = &rpm_clk_msm8996 },
 	{ .compatible = "qcom,rpmcc-bengal", .data = &rpm_clk_bengal},
@@ -1201,7 +1245,7 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
 	struct clk *clk;
 	struct rpm_cc *rcc;
 	struct clk_onecell_data *data;
-	int ret, is_bengal, is_scuba, is_sdm660, is_qm215, is_sdm439;
+	int ret, is_bengal, is_scuba, is_sdm660, is_qm215, is_sdm439, is_msm8953;
 	size_t num_clks, i;
 	struct clk_hw **hw_clks;
 	const struct rpm_smd_clk_desc *desc;
@@ -1226,6 +1270,9 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
 	is_sdm439 = of_device_is_compatible(pdev->dev.of_node,
 						"qcom,rpmcc-sdm439");
 
+	is_msm8940 = of_device_is_compatible(pdev->dev.of_node,
+						"qcom,rpmcc-msm8953");
+
 	if (is_sdm660) {
 		ret = clk_vote_bimc(&sdm660_bimc_clk.hw, INT_MAX);
 		if (ret < 0)
@@ -1234,6 +1281,12 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
 
 	if (is_qm215 || is_sdm439) {
 		ret = clk_vote_bimc(&sdm429w_bimc_clk.hw, INT_MAX);
+		if (ret < 0)
+			return ret;
+	}
+
+	if (is_msm8953) {
+		ret = clk_vote_bimc(&msm8916_bimc_clk.hw, INT_MAX);
 		if (ret < 0)
 			return ret;
 	}
@@ -1328,6 +1381,15 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
 		clk_prepare_enable(cnoc_periph_keepalive_a_clk.hw.clk);
 	} else if (is_qm215 || is_sdm439) {
 		clk_prepare_enable(sdm429w_bi_tcxo_ao.hw.clk);
+
+		/*
+		 * Hold an active set vote for the pnoc_periph PCNOC AHB
+		 * resource. Sleep set vote is 0
+		 */
+		clk_set_rate(pnoc_keepalive_a_clk.hw.clk, 19200000);
+		clk_prepare_enable(pnoc_keepalive_a_clk.hw.clk);
+	} else if (is_msm8953) {
+		clk_prepare_enable(msm8953_bi_tcxo_ao.hw.clk);
 
 		/*
 		 * Hold an active set vote for the pnoc_periph PCNOC AHB
