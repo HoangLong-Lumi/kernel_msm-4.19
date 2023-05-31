@@ -6,6 +6,9 @@
 #include <dt-bindings/clock/msm-clocks-8953.h>
 #include <dt-bindings/msm/msm-bus-ids.h>
 
+#define MHZ_TO_MBPS(mhz, w) ((mhz * 1000000 * w) / (1024 * 1024))
+#define BW_OPP_ENTRY(mhz, w) opp-mhz {opp-hz = /bits/ 64 <MHZ_TO_MBPS(mhz, w)>;}
+
 / {
 	model = "Qualcomm Technologies, Inc. MSM8953";
 	compatible = "qcom,msm8953";
@@ -1013,23 +1016,26 @@
 			 < 2208000 >;
 	};
 
+	ddr_bw_opp_table: ddr-bw-opp-table {
+		compatible = "operating-points-v2";
+		BW_OPP_ENTRY( 211, 8); /* 1611 MB/s */
+		BW_OPP_ENTRY( 278, 8); /* 2124 MB/s */
+		BW_OPP_ENTRY( 384, 8); /* 2929 MB/s */
+		BW_OPP_ENTRY( 422, 8); /* 3221 MB/s */
+		BW_OPP_ENTRY( 557, 8); /* 4248 MB/s */
+		BW_OPP_ENTRY( 672, 8); /* 5126 MB/s */
+		BW_OPP_ENTRY( 768, 8); /* 5859 MB/s */
+		BW_OPP_ENTRY( 806, 8); /* 6152 MB/s */
+		BW_OPP_ENTRY( 845, 8); /* 6445 MB/s */
+		BW_OPP_ENTRY( 931, 8); /* 7104 MB/s */
+	};
+
 	cpubw: qcom,cpubw {
 		compatible = "qcom,devbw";
 		governor = "cpufreq";
 		qcom,src-dst-ports = <1 512>;
 		qcom,active-only;
-		qcom,bw-tbl =
-			<   769 /*  100.8 MHz */ >,
-			<  1611 /*  211.2 MHz */ >,     /*Low SVS*/
-			<  2124 /*  278.4 MHz */ >,
-			<  2929 /*  384   MHz */ >,
-			<  3221 /*  422.4 MHz */ >,	/* SVS */
-			<  4248 /*  556.8 MHz */ >,
-			<  5126 /*  672   MHz */ >,
-			<  5859 /*  768   MHz */ >,     /* SVS+  */
-			<  6152 /*  806.4 MHz */ >,
-			<  6445 /*  844.8 MHz */ >,     /* NOM   */
-			<  7104 /*  931.2 MHz */ >;     /* TURBO */
+		operating-points-v2 = <&ddr_bw_opp_table>;
 	};
 
 	mincpubw: qcom,mincpubw {
@@ -1037,18 +1043,7 @@
 		governor = "cpufreq";
 		qcom,src-dst-ports = <1 512>;
 		qcom,active-only;
-		qcom,bw-tbl =
-			<   769 /*  100.8 MHz */ >,
-			<  1611 /*  211.2 MHz */ >,     /*Low SVS*/
-			<  2124 /*  278.4 MHz */ >,
-			<  2929 /*  384   MHz */ >,
-			<  3221 /*  422.4 MHz */ >,	/* SVS */
-			<  4248 /*  556.8 MHz */ >,
-			<  5126 /*  672   MHz */ >,
-			<  5859 /*  768   MHz */ >,     /* SVS+  */
-			<  6152 /*  806.4 MHz */ >,
-			<  6445 /*  844.8 MHz */ >,     /* NOM   */
-			<  7104 /*  931.2 MHz */ >;     /* TURBO */
+		operating-points-v2 = <&ddr_bw_opp_table>;
 	};
 
 	qcom,cpu-bwmon {

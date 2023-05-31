@@ -21,6 +21,20 @@
 		compatible = "qcom,kgsl-busmon";
 	};
 
+	gpu_bw_opp_table: gpu-bw-opp-table {
+		compatible = "operating-points-v2";
+		BW_OPP_ENTRY( 211, 8); /* 1611 MB/s */
+		BW_OPP_ENTRY( 278, 8); /* 2124 MB/s */
+		BW_OPP_ENTRY( 384, 8); /* 2929 MB/s */
+		BW_OPP_ENTRY( 422, 8); /* 3221 MB/s */
+		BW_OPP_ENTRY( 557, 8); /* 4248 MB/s */
+		BW_OPP_ENTRY( 672, 8); /* 5126 MB/s */
+		BW_OPP_ENTRY( 768, 8); /* 5859 MB/s */
+		BW_OPP_ENTRY( 806, 8); /* 6152 MB/s */
+		BW_OPP_ENTRY( 845, 8); /* 6445 MB/s */
+		BW_OPP_ENTRY( 931, 8); /* 7104 MB/s */
+	};
+
 	gpubw: qcom,gpubw {
 		compatible = "qcom,devbw";
 		governor = "bw_vbif";
@@ -31,18 +45,7 @@
 		 * subsystem is inactiv3
 		 */
 		qcom,active-only;
-		qcom,bw-tbl =
-			< 0    >, /*  off */
-			< 1611 >, /* 1. DDR:211.20 MHz BIMC: 105.60 MHz */
-			< 2124 >, /* 2. DDR:278.40 MHz BIMC: 139.20 MHz */
-			< 2929 >, /* 3. DDR:384.00 MHz BIMC: 192.00 MHz */
-			< 3222 >, /* 4. DDR:422.40 MHz BIMC: 211.20 MHz */
-			< 4248 >, /* 5. DDR:556.80 MHz BIMC: 278.40 MHz */
-			< 5126 >, /* 6. DDR:672.00 MHz BIMC: 336.00 MHz */
-			< 5859 >, /* 7. DDR:768.00 MHz BIMC: 384.00 MHz */
-			< 6152 >, /* 8. DDR:806.40 MHz BIMC: 403.20 MHz */
-			< 6445 >, /* 9. DDR:844.80 MHz BIMC: 422.40 MHz */
-			< 7104 >; /*10. DDR:931.20 MHz BIMC: 465.60 MHz */
+		operating-points-v2 = <&gpu_bw_opp_table>;
 	};
 
 	msm_gpu: qcom,kgsl-3d0@1c00000 {
