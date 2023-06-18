@@ -40,7 +40,7 @@
 			qcom,node-qos-clks {
 				clock-names = "pcnoc-usb3-axi-no-rate";
 				clocks =
-					<&clock_gcc clk_gcc_pcnoc_usb3_axi_clk>;
+					<&gcc GCC_PCNOC_USB3_AXI_CLK>;
 			};
 		};
 
