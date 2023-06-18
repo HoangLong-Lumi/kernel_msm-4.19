@@ -1270,7 +1270,7 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
 	is_sdm439 = of_device_is_compatible(pdev->dev.of_node,
 						"qcom,rpmcc-sdm439");
 
-	is_msm8940 = of_device_is_compatible(pdev->dev.of_node,
+	is_msm8953 = of_device_is_compatible(pdev->dev.of_node,
 						"qcom,rpmcc-msm8953");
 
 	if (is_sdm660) {
