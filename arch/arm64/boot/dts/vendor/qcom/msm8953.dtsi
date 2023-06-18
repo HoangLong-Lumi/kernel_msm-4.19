@@ -117,6 +117,11 @@
 			size = <0 0x800000>;
 		};
 
+		smem_mem: smem_region@86300000 {
+			no-map;
+			reg = <0x86300000 0x100000>;
+		};
+
 		dfps_data_mem: dfps_data_mem@90000000 {
 			reg = <0 0x90000000 0 0x1000>;
 			label = "dfps_data_mem";
@@ -177,7 +182,7 @@
 		 * The ordering of these devices is important to boot time
 		 * for iot projects.
 		 */
-		smem: qcom,smem@86300000 {};
+		smem: qcom,smem {};
 		rpm_bus: qcom,rpm-smd {};
 		gcc: qcom,gcc@1800000 {};
 		ad_hoc_bus: ad-hoc-bus@580000 {};
@@ -885,26 +890,26 @@
 		#clock-cells = <1>;
 	};
 
-	qcom,ipc-spinlock@1905000 {
-		compatible = "qcom,ipc-spinlock-sfpb";
-		reg = <0x1905000 0x8000>;
-		qcom,num-locks = <8>;
-	};
-
 	apcs: syscon@0b011008 {
 		compatible = "syscon";
 		reg = <0x0b011008 0x04>;
 	};
 
-	qcom,smem@86300000 {
+	tcsr_mutex_block: syscon@01905000 {
+		compatible = "syscon";
+		reg = <0x01905000 0x20000>;
+	};
+
+	tcsr_mutex: hwlock {
+		compatible = "qcom,tcsr-mutex";
+		syscon = <&tcsr_mutex_block 0 0x1000>;
+		#hwlock-cells = <1>;
+	};
+
+	smem: qcom,smem {
 		compatible = "qcom,smem";
-		reg = <0x86300000 0x100000>,
-			<0x0b011008 0x4>,
-			<0x60000 0x8000>,
-			<0x193d000 0x8>;
-		reg-names = "smem", "irq-reg-base",
-				"aux-mem1", "smem_targ_info_reg";
-		qcom,mpu-enabled;
+		memory-region = <&smem_mem>;
+		hwlocks = <&tcsr_mutex 3>;
 	};
 
 	smd {
