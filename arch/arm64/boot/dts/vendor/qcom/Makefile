@@ -467,6 +467,8 @@ dtb-$(CONFIG_ARCH_SDM429) += sdm429-mtp.dtb \
 	sda429-cdp.dtb
 endif
 
+dtb-$(CONFIG_ARCH_SDM632) += sdm632-casuarina.dtb
+
 always		:= $(dtb-y)
 subdir-y	:= $(dts-dirs)
 clean-files    := *.dtb *.dtbo
