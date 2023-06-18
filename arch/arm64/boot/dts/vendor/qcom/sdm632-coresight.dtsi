@@ -17,8 +17,8 @@
 		cpu = <&CPU4>;
 		coresight-name = "coresight-etm4";
 
-		clocks = <&clock_gcc clk_qdss_clk>,
-					 <&clock_gcc clk_qdss_a_clk>;
+		clocks = <&rpmcc RPM_SMD_QDSS_CLK>,
+					 <&rpmcc RPM_SMD_QDSS_A_CLK>;
 		clock-names = "apb_pclk";
 
 		port {
@@ -36,8 +36,8 @@
 		cpu = <&CPU5>;
 		coresight-name = "coresight-etm5";
 
-		clocks = <&clock_gcc clk_qdss_clk>,
-					 <&clock_gcc clk_qdss_a_clk>;
+		clocks = <&rpmcc RPM_SMD_QDSS_CLK>,
+					 <&rpmcc RPM_SMD_QDSS_A_CLK>;
 		clock-names = "apb_pclk";
 
 		port {
@@ -55,8 +55,8 @@
 		cpu = <&CPU6>;
 		coresight-name = "coresight-etm6";
 
-		clocks = <&clock_gcc clk_qdss_clk>,
-					 <&clock_gcc clk_qdss_a_clk>;
+		clocks = <&rpmcc RPM_SMD_QDSS_CLK>,
+					 <&rpmcc RPM_SMD_QDSS_A_CLK>;
 		clock-names = "apb_pclk";
 
 		port {
@@ -74,8 +74,8 @@
 		coresight-name = "coresight-etm7";
 		cpu = <&CPU7>;
 
-		clocks = <&clock_gcc clk_qdss_clk>,
-					 <&clock_gcc clk_qdss_a_clk>;
+		clocks = <&rpmcc RPM_SMD_QDSS_CLK>,
+					 <&rpmcc RPM_SMD_QDSS_A_CLK>;
 		clock-names = "apb_pclk";
 
 		port {
@@ -95,8 +95,8 @@
 		cpu = <&CPU4>;
 		qcom,cti-save;
 
-		clocks = <&clock_gcc clk_qdss_clk>,
-			 <&clock_gcc clk_qdss_a_clk>;
+		clocks = <&rpmcc RPM_SMD_QDSS_CLK>,
+			 <&rpmcc RPM_SMD_QDSS_A_CLK>;
 		clock-names = "apb_pclk";
 	};
 
@@ -109,8 +109,8 @@
 		coresight-name = "coresight-cti-cpu5";
 		cpu = <&CPU5>;
 		qcom,cti-save;
-		clocks = <&clock_gcc clk_qdss_clk>,
-			 <&clock_gcc clk_qdss_a_clk>;
+		clocks = <&rpmcc RPM_SMD_QDSS_CLK>,
+			 <&rpmcc RPM_SMD_QDSS_A_CLK>;
 		clock-names = "apb_pclk";
 	};
 
@@ -124,8 +124,8 @@
 		cpu = <&CPU6>;
 		qcom,cti-save;
 
-		clocks = <&clock_gcc clk_qdss_clk>,
-			 <&clock_gcc clk_qdss_a_clk>;
+		clocks = <&rpmcc RPM_SMD_QDSS_CLK>,
+			 <&rpmcc RPM_SMD_QDSS_A_CLK>;
 		clock-names = "apb_pclk";
 	};
 
@@ -139,8 +139,8 @@
 		cpu = <&CPU7>;
 		qcom,cti-save;
 
-		clocks = <&clock_gcc clk_qdss_clk>,
-			 <&clock_gcc clk_qdss_a_clk>;
+		clocks = <&rpmcc RPM_SMD_QDSS_CLK>,
+			 <&rpmcc RPM_SMD_QDSS_A_CLK>;
 		clock-names = "apb_pclk";
 	};
 };

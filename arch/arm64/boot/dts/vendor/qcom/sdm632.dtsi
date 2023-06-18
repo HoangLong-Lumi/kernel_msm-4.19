@@ -819,7 +819,7 @@
 	vdd-c0-supply = <&apc0_pwrcl_vreg>;
 	vdd-c1-supply = <&apc1_perfcl_vreg>;
 	vdd-cci-supply = <&apc0_pwrcl_vreg>;
-	clocks = <&clock_gcc clk_xo_a_clk_src>;
+	clocks = <&rpmcc RPM_SMD_XO_A_CLK_SRC>;
 	clock-names = "xo_a";
 	qcom,speed0-bin-v0-c0 =
 		<          0 0>,
